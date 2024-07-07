@@ -12,7 +12,11 @@ import {
 } from "react-zoom-pan-pinch";
 
 import type { TPage } from "../../types/TPage";
+import { Breakpoint } from "../Page/Breakpoint";
+import { useCanvasStore } from "./CanvasStore";
 import { CanvasToolbar } from "./CanvasToolbar";
+
+export const BREAKPOINT_SPACING = 200;
 
 const CanvasWrapper = styled.div`
   .canvas-content {
@@ -88,40 +92,18 @@ export const MM_TO_PX = 3.78;
 export const Canvas: React.FC<{
 	page: TPage;
 }> = ({ page }) => {
-	const frameRef = useRef<HTMLIFrameElement | null>();
-
-	const transformRef = useRef<ReactZoomPanPinchRef | null>(null);
+	const transformWrapperRef = useCanvasStore(
+		({ transformWrapperRef }) => transformWrapperRef,
+	);
 
 	const format = "a4";
 
 	const layout = [1];
 
-	useEffect(() => {
-		const handleMessage = (event: MessageEvent) => {
-			console.log("asd");
-			if (event.origin !== window.location.origin) return;
-
-			console.log("asd1");
-			if (event.data.type === "ZOOM_IN") transformRef.current?.zoomIn(0.2);
-			if (event.data.type === "ZOOM_OUT") transformRef.current?.zoomOut(0.2);
-			if (event.data.type === "CENTER_VIEW") transformRef.current?.centerView();
-			if (event.data.type === "RESET_VIEW") {
-				transformRef.current?.resetTransform(0);
-				setTimeout(() => transformRef.current?.centerView(0.8, 0), 10);
-			}
-		};
-
-		window.addEventListener("message", handleMessage);
-
-		return () => {
-			window.removeEventListener("message", handleMessage);
-		};
-	}, []);
-
 	return (
 		<CanvasWrapper>
 			<TransformWrapper
-				ref={transformRef}
+				ref={transformWrapperRef}
 				centerOnInit
 				maxScale={2}
 				minScale={0.4}
@@ -142,36 +124,20 @@ export const Canvas: React.FC<{
 				>
 					<div
 						style={{
-							boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.1)",
+							display: "flex",
+							gap: `${BREAKPOINT_SPACING}px`,
+							padding: `${BREAKPOINT_SPACING}px`,
 						}}
 					>
-						<StyledIframe
-							ref={frameRef}
-							initialContent='<!DOCTYPE html><html><head></head><body style="padding: 0; margin: 0;" id="root"></body></html>'
-							mountTarget="#root"
-						>
-							<FrameProvider>
-								<div style={{ width: "100%" }}>
-									{page.sections.map((section) => {
-										return (
-											<div
-												style={{
-													padding: 40,
-												}}
-												key={section.uuid}
-											>
-												{section.uuid}
-											</div>
-										);
-									})}
-								</div>
-							</FrameProvider>
-						</StyledIframe>
+						<Breakpoint size={"large"} />
 
-						<CanvasToolbar />
+						<Breakpoint size={"medium"} />
+
+						<Breakpoint size={"small"} />
 					</div>
 				</TransformComponent>
 			</TransformWrapper>
+			<CanvasToolbar />
 		</CanvasWrapper>
 	);
 };
