@@ -1,36 +1,38 @@
 import type React from "react";
 import { BREAKPOINT_SPACING } from "../Canvas/Canvas";
 
+export type ScreenSize = "phone" | "tablet" | "desktop";
+
 export type PageProps = {
-	size: "small" | "medium" | "large";
+	size: ScreenSize;
 };
 
-const sizes: Record<
-	(typeof PageProps)["size"],
+export const SCREEN_SIZES: Record<
+	ScreenSize,
 	{
 		width: number;
 		height: number;
 	}
 > = {
-	small: {
+	phone: {
 		width: 375,
-		height: 2000,
+		height: 16000,
 	},
-	medium: {
+	tablet: {
 		width: 1080,
-		height: 3000,
+		height: 12000,
 	},
-	large: {
-		width: 1920,
-		height: 1000,
+	desktop: {
+		width: 1440,
+		height: 8000,
 	},
 };
 
-export const Breakpoint: React.FC<PageProps> = ({ size }) => {
+export const ScreenSize: React.FC<PageProps> = ({ size }) => {
 	return (
 		<div
 			style={{
-				...sizes[size],
+				...SCREEN_SIZES[size],
 				boxShadow: `5px 5px calc(.8*${BREAKPOINT_SPACING}px)rgba(0,0,0,.1019607843)`,
 			}}
 		>

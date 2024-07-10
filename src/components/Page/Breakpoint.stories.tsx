@@ -1,19 +1,31 @@
 import type { Meta, StoryFn } from "@storybook/react";
 import React from "react";
-import { Breakpoint } from "./Breakpoint";
+import { ScreenSize } from "./ScreenSize";
 
 export default {
-	title: "Breakpoint",
-	component: Breakpoint,
+	title: "ScreenSize",
+	component: ScreenSize,
 	parameters: {
-		jest: ["Breakpoint"],
+		jest: ["ScreenSize"],
 		componentSubtitle: "",
 	},
-} as Meta<typeof Breakpoint>;
+} as Meta<typeof ScreenSize>;
 
-const Template: StoryFn<typeof Breakpoint> = (args) => {
-	return <Breakpoint {...args} />;
+const Template: StoryFn<typeof ScreenSize> = (args) => {
+	return <ScreenSize {...args} />;
 };
 
 export const Default = Template.bind({});
 Default.args = {};
+
+// cavnas;
+// sizing;
+// next;
+//
+// make;
+// sure;
+// everything;
+// is in view;
+// when;
+// you;
+// open;

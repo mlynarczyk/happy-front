@@ -3,18 +3,16 @@ import { CacheProvider } from "@emotion/react";
 import styled from "@emotion/styled";
 import weakMemoize from "@emotion/weak-memoize";
 import type React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Frame, { FrameContextConsumer } from "react-frame-component";
-import {
-	type ReactZoomPanPinchRef,
-	TransformComponent,
-	TransformWrapper,
-} from "react-zoom-pan-pinch";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
 import type { TPage } from "../../types/TPage";
-import { Breakpoint } from "../Page/Breakpoint";
+import { SCREEN_SIZES, ScreenSize } from "../Page/ScreenSize";
+import { CanvasDebugger } from "./CanvasDebugger/CanvasDebugger";
 import { useCanvasStore } from "./CanvasStore";
 import { CanvasToolbar } from "./CanvasToolbar";
+import { useInitialCanasPosition } from "./useInitialCanasPosition";
 
 export const BREAKPOINT_SPACING = 200;
 
@@ -76,19 +74,6 @@ export const FrameProvider = (props) => (
 	</FrameContextConsumer>
 );
 
-export const pageSizeMap = {
-	a4: {
-		width: 210,
-		height: 297,
-	},
-	letter: {
-		width: 216,
-		height: 279,
-	},
-};
-
-export const MM_TO_PX = 3.78;
-
 export const Canvas: React.FC<{
 	page: TPage;
 }> = ({ page }) => {
@@ -96,9 +81,32 @@ export const Canvas: React.FC<{
 		({ transformWrapperRef }) => transformWrapperRef,
 	);
 
+	const visibleScreenSizes = useCanvasStore(
+		({ visibleScreenSizes }) => visibleScreenSizes,
+	);
+
+	const { offsetY, offsetX, scale } = useInitialCanasPosition();
+
+	const [showContent, setShowContent] = useState(false);
+
 	const format = "a4";
 
 	const layout = [1];
+
+	useEffect(() => {
+		const fitContentToViewport = () => {
+			if (!transformWrapperRef.current) return;
+
+			setTimeout(() => {
+				transformWrapperRef.current.setTransform(offsetX, offsetY, scale, 0);
+				setShowContent(true);
+			}, 200);
+		};
+
+		fitContentToViewport();
+	}, [scale, offsetY, offsetX, transformWrapperRef]);
+
+	if (typeof window === "undefined") return;
 
 	return (
 		<CanvasWrapper>
@@ -106,38 +114,41 @@ export const Canvas: React.FC<{
 				ref={transformWrapperRef}
 				centerOnInit
 				maxScale={2}
-				minScale={0.4}
-				initialScale={0.8}
+				minScale={0.2}
+				initialScale={1}
+				initialPositionX={0}
+				initialPositionY={0}
 				limitToBounds={false}
 			>
 				<TransformComponent
 					wrapperStyle={{
 						width: "100vw",
 						height: "100vh",
+						visibility: showContent ? "visible" : "hidden",
 					}}
 					wrapperClass="canvas-wrapper"
 					contentClass="canvas-content"
-					contentStyle={{
-						width: `${layout.length * (pageSizeMap[format].width * MM_TO_PX + 42)}px`,
-						gridTemplateColumns: `repeat(${layout.length}, 1fr)`,
-					}}
+					// contentStyle={{
+					// 	width: `${layout.length * (pageSizeMap[format].width * MM_TO_PX + 42)}px`,
+					// 	gridTemplateColumns: `repeat(${layout.length}, 1fr)`,
+					// }}
 				>
 					<div
+						id={"screen-sizes"}
 						style={{
 							display: "flex",
 							gap: `${BREAKPOINT_SPACING}px`,
 							padding: `${BREAKPOINT_SPACING}px`,
 						}}
 					>
-						<Breakpoint size={"large"} />
-
-						<Breakpoint size={"medium"} />
-
-						<Breakpoint size={"small"} />
+						{visibleScreenSizes.map((screenSize) => (
+							<ScreenSize size={screenSize} key={screenSize} />
+						))}
 					</div>
 				</TransformComponent>
+				<CanvasDebugger />
+				<CanvasToolbar />
 			</TransformWrapper>
-			<CanvasToolbar />
 		</CanvasWrapper>
 	);
 };
