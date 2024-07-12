@@ -12,7 +12,7 @@ import { SCREEN_SIZES, ScreenSize } from "../Page/ScreenSize";
 import { CanvasDebugger } from "./CanvasDebugger/CanvasDebugger";
 import { useCanvasStore } from "./CanvasStore";
 import { CanvasToolbar } from "./CanvasToolbar";
-import { useInitialCanasPosition } from "./useInitialCanasPosition";
+import { useInitialCanvasPosition } from "./useInitialCanvasPosition";
 
 export const BREAKPOINT_SPACING = 200;
 
@@ -39,6 +39,7 @@ const CanvasWrapper = styled.div`
     user-select: none;
     margin: 0;
     padding: 0;
+		background-color: #f9f9f9;
   }
 `;
 
@@ -81,11 +82,9 @@ export const Canvas: React.FC<{
 		({ transformWrapperRef }) => transformWrapperRef,
 	);
 
-	const visibleScreenSizes = useCanvasStore(
-		({ visibleScreenSizes }) => visibleScreenSizes,
-	);
+	const visibleScreenSizes = useCanvasStore(({ screenSizes }) => screenSizes);
 
-	const { offsetY, offsetX, scale } = useInitialCanasPosition();
+	const { offsetY, offsetX, scale } = useInitialCanvasPosition();
 
 	const [showContent, setShowContent] = useState(false);
 
@@ -100,7 +99,7 @@ export const Canvas: React.FC<{
 			setTimeout(() => {
 				transformWrapperRef.current.setTransform(offsetX, offsetY, scale, 0);
 				setShowContent(true);
-			}, 200);
+			}, 50);
 		};
 
 		fitContentToViewport();
@@ -111,6 +110,7 @@ export const Canvas: React.FC<{
 	return (
 		<CanvasWrapper>
 			<TransformWrapper
+				// doubleClick={{ disabled: true }}
 				ref={transformWrapperRef}
 				centerOnInit
 				maxScale={2}
@@ -119,11 +119,17 @@ export const Canvas: React.FC<{
 				initialPositionX={0}
 				initialPositionY={0}
 				limitToBounds={false}
+				wheel={{
+					wheelDisabled: true,
+				}}
+				panning={{
+					wheelPanning: true,
+				}}
 			>
 				<TransformComponent
 					wrapperStyle={{
-						width: "100vw",
-						height: "100vh",
+						// width: "100vw",
+						// height: "100vh",
 						visibility: showContent ? "visible" : "hidden",
 					}}
 					wrapperClass="canvas-wrapper"
@@ -142,7 +148,7 @@ export const Canvas: React.FC<{
 						}}
 					>
 						{visibleScreenSizes.map((screenSize) => (
-							<ScreenSize size={screenSize} key={screenSize} />
+							<ScreenSize screenSize={screenSize} key={screenSize} />
 						))}
 					</div>
 				</TransformComponent>

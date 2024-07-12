@@ -4,16 +4,18 @@ import { Button } from "../Button";
 import { useControls } from "react-zoom-pan-pinch";
 import { useCanvasStore } from "./CanvasStore";
 import * as S from "./CanvasToolbar.styles";
-import { useInitialCanasPosition } from "./useInitialCanasPosition";
+import { useInitialCanvasPosition } from "./useInitialCanvasPosition";
 
 export const CanvasToolbar: React.FC = () => {
-	const { zoomIn, zoomOut, setTransform } = useControls();
+	const { zoomIn, zoomOut, setTransform, instance } = useControls();
 
-	const { offsetY, offsetX, scale } = useInitialCanasPosition();
+	const { offsetY, offsetX, scale } = useInitialCanvasPosition();
 
 	const onResetView = () => {
-		setTransform(offsetX, offsetY, scale, 0);
+		setTransform(offsetX, offsetY, scale, 200);
 	};
+
+	console.log(instance);
 
 	return (
 		<S.Toolbar>
@@ -30,6 +32,16 @@ export const CanvasToolbar: React.FC = () => {
 						zoomOut(0.2);
 					}}
 				/>
+
+				<Button
+					label="Set zoom 100"
+					onClick={() => {
+						const { positionX, positionY } = instance.transformState;
+
+						setTransform(positionX, positionY, 1);
+					}}
+				/>
+
 				<Button label="Reset View" onClick={onResetView} />
 			</S.ToolbarCenter>
 		</S.Toolbar>

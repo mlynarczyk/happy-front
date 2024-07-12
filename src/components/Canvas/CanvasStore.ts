@@ -7,14 +7,26 @@ import type { ScreenSize } from "../Page/ScreenSize";
 
 export type CanvasStore = {
 	transformWrapperRef: RefObject<ReactZoomPanPinchRef | null>;
-	visibleScreenSizes: ScreenSize[];
+	screenSizes: ScreenSize[];
+	removeScreenSize: (screenSize: ScreenSize) => void;
 	canvas: TPage;
 	setCanvas: (canvas: TPage) => void;
 };
 
 export const useCanvasStore = create<CanvasStore>()((set) => ({
 	transformWrapperRef: createRef<ReactZoomPanPinchRef | null>(),
-	visibleScreenSizes: ["desktop", "tablet", "phone"],
+	screenSizes: ["desktop", "tablet", "phone"],
+	removeScreenSize: (screenSizeToRemove) => {
+		set(({ screenSizes }) => {
+			if (screenSizes.length === 1) return {};
+
+			return {
+				screenSizes: screenSizes.filter(
+					(screenSize) => screenSize !== screenSizeToRemove,
+				),
+			};
+		});
+	},
 	page: null as unknown as TPage,
 	setCanvas: (canvas) => {
 		set({ canvas });

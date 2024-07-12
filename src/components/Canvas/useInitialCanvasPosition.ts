@@ -2,13 +2,11 @@ import { SCREEN_SIZES } from "../Page/ScreenSize";
 import { BREAKPOINT_SPACING } from "./Canvas";
 import { useCanvasStore } from "./CanvasStore";
 
-export const useInitialCanasPosition = () => {
+export const useInitialCanvasPosition = () => {
 	const viewportWidth =
 		typeof window === "undefined" ? 1440 : window.innerWidth;
 
-	const visibleScreenSizes = useCanvasStore(
-		({ visibleScreenSizes }) => visibleScreenSizes,
-	);
+	const visibleScreenSizes = useCanvasStore(({ screenSizes }) => screenSizes);
 
 	const contentWidth = (() => {
 		const visibleScreenSizesWidth = visibleScreenSizes
