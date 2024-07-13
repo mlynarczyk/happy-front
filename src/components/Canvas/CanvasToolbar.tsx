@@ -15,8 +15,6 @@ export const CanvasToolbar: React.FC = () => {
 		setTransform(offsetX, offsetY, scale, 200);
 	};
 
-	console.log(instance);
-
 	return (
 		<S.Toolbar>
 			<S.ToolbarCenter>

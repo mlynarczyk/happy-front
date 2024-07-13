@@ -37,10 +37,6 @@ export const SCREEN_SIZES: Record<
 export const ScreenSize: React.FC<PageProps> = ({ screenSize }) => {
 	const [ref, setRef] = useState<HTMLDivElement | null>(null);
 
-	const removeScreenSize = useCanvasStore(
-		({ removeScreenSize }) => removeScreenSize,
-	);
-
 	return (
 		<div
 			ref={setRef}
@@ -51,17 +47,8 @@ export const ScreenSize: React.FC<PageProps> = ({ screenSize }) => {
 				backgroundColor: "#fff",
 			}}
 		>
-			<ScreenSizeReporter trackedElement={ref} />
-			Page
-			<S.RemoveScreenSizeButton
-				type="button"
-				onClick={() => {
-					console.log("aa");
-					removeScreenSize(screenSize);
-				}}
-			>
-				Remove
-			</S.RemoveScreenSizeButton>
+			<ScreenSizeReporter trackedElement={ref} screenSize={screenSize} />
+			ScreenSize
 		</div>
 	);
 };

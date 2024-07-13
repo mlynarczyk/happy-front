@@ -3,8 +3,9 @@ import { BREAKPOINT_SPACING } from "./Canvas";
 import { useCanvasStore } from "./CanvasStore";
 
 export const useInitialCanvasPosition = () => {
-	const viewportWidth =
-		typeof window === "undefined" ? 1440 : window.innerWidth;
+	if (!window) throw new Error("This hook is mean to be used client side only");
+
+	const viewportWidth = window.innerWidth;
 
 	const visibleScreenSizes = useCanvasStore(({ screenSizes }) => screenSizes);
 

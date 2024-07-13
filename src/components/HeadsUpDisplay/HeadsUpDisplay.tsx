@@ -1,12 +1,22 @@
 import type React from "react";
-import { usePageEditorStore } from "../PageEditor/PageEditorStore";
+import { Button } from "../Button";
+import { ScreenSize } from "../Page/ScreenSize";
+import {
+	type ScreenSizeTarget,
+	usePageEditorStore,
+} from "../PageEditor/PageEditorStore";
+import { ScreenSizeHud } from "./ScreenSizeHud/ScreenSizeHud";
 
 export const HeadsUpDisplay: React.FC = () => {
 	const targets = usePageEditorStore(({ targets }) => {
 		return targets;
 	});
 
-	console.log(targets);
+	const screenSizeTargets = targets.filter(
+		(target) => target.type === "screen-size",
+	) as ScreenSizeTarget[];
+
+	const otherTargets = targets.filter((target) => target.type === "Target");
 
 	return (
 		<div
@@ -17,9 +27,11 @@ export const HeadsUpDisplay: React.FC = () => {
 				zIndex: 1,
 			}}
 		>
-			<div>hud on</div>
+			{screenSizeTargets.map((target) => {
+				return <ScreenSizeHud key={target.uuid} target={target} />;
+			})}
 
-			{targets.map((target) => {
+			{otherTargets.map((target) => {
 				return (
 					<div
 						key={target.uuid}
@@ -40,6 +52,8 @@ export const HeadsUpDisplay: React.FC = () => {
 						{target.rect.top}
 						<br />
 						{target.rect.left}
+
+						<Button>Add</Button>
 					</div>
 				);
 			})}

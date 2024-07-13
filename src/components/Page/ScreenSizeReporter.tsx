@@ -1,47 +1,52 @@
 import type React from "react";
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTransformEffect } from "react-zoom-pan-pinch";
 import { uuid } from "../../utils/uuid";
 import { usePageEditorStore } from "../PageEditor/PageEditorStore";
+import type { ScreenSize } from "./ScreenSize";
 
 export const ScreenSizeReporter: React.FC<{
 	trackedElement: HTMLDivElement | null;
-}> = ({ trackedElement }) => {
+	screenSize: ScreenSize;
+}> = ({ trackedElement, screenSize }) => {
 	const { current: id } = useRef(uuid());
 
-	const { addTarget, removeTarget } = usePageEditorStore(
-		({ addTarget, removeTarget }) => {
-			return { addTarget, removeTarget };
+	const { upsertTarget, removeTarget } = usePageEditorStore(
+		({ upsertTarget, removeTarget }) => {
+			return { upsertTarget: upsertTarget, removeTarget };
 		},
 	);
 
-	useTransformEffect((context) => {
+	useTransformEffect(() => {
 		if (!trackedElement) return;
 
-		addTarget({
+		upsertTarget({
 			uuid: id,
-			type: "ScreenSize",
+			type: "screen-size",
 			rect: trackedElement.getBoundingClientRect(),
+			payload: screenSize,
 		});
 	});
 
 	useEffect(() => {
 		if (!trackedElement) return;
 
-		addTarget({
+		upsertTarget({
 			uuid: id,
-			type: "ScreenSize",
+			type: "screen-size",
 			rect: trackedElement.getBoundingClientRect(),
+			payload: screenSize,
 		});
 
 		return () => {
 			removeTarget({
 				uuid: id,
-				type: "ScreenSize",
+				type: "screen-size",
 				rect: trackedElement.getBoundingClientRect(),
+				payload: screenSize,
 			});
 		};
-	}, [trackedElement, removeTarget, addTarget]);
+	}, [trackedElement, removeTarget, upsertTarget, screenSize]);
 
 	return null;
 };

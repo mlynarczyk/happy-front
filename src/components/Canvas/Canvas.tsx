@@ -10,11 +10,12 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import type { TPage } from "../../types/TPage";
 import { SCREEN_SIZES, ScreenSize } from "../Page/ScreenSize";
 import { CanvasDebugger } from "./CanvasDebugger/CanvasDebugger";
+import { CanvasInitializer } from "./CanvasInitializer";
 import { useCanvasStore } from "./CanvasStore";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { useInitialCanvasPosition } from "./useInitialCanvasPosition";
 
-export const BREAKPOINT_SPACING = 200;
+export const BREAKPOINT_SPACING = 250;
 
 const CanvasWrapper = styled.div`
   .canvas-content {
@@ -29,6 +30,7 @@ const CanvasWrapper = styled.div`
     margin: 0;
     padding: 0;
     transform-origin: 0% 0%;
+
   }
 
   .canvas-wrapper {
@@ -40,6 +42,8 @@ const CanvasWrapper = styled.div`
     margin: 0;
     padding: 0;
 		background-color: #f9f9f9;
+		
+		min-width: 100vw;
   }
 `;
 
@@ -86,6 +90,8 @@ export const Canvas: React.FC<{
 
 	const { offsetY, offsetX, scale } = useInitialCanvasPosition();
 
+	console.log({ offsetY, offsetX, scale });
+
 	const [showContent, setShowContent] = useState(false);
 
 	const format = "a4";
@@ -99,7 +105,7 @@ export const Canvas: React.FC<{
 			setTimeout(() => {
 				transformWrapperRef.current.setTransform(offsetX, offsetY, scale, 0);
 				setShowContent(true);
-			}, 50);
+			}, 0);
 		};
 
 		fitContentToViewport();
@@ -109,15 +115,13 @@ export const Canvas: React.FC<{
 
 	return (
 		<CanvasWrapper>
+			<CanvasInitializer />
 			<TransformWrapper
 				// doubleClick={{ disabled: true }}
 				ref={transformWrapperRef}
 				centerOnInit
 				maxScale={2}
 				minScale={0.2}
-				initialScale={1}
-				initialPositionX={0}
-				initialPositionY={0}
 				limitToBounds={false}
 				wheel={{
 					wheelDisabled: true,
@@ -128,16 +132,10 @@ export const Canvas: React.FC<{
 			>
 				<TransformComponent
 					wrapperStyle={{
-						// width: "100vw",
-						// height: "100vh",
 						visibility: showContent ? "visible" : "hidden",
 					}}
 					wrapperClass="canvas-wrapper"
 					contentClass="canvas-content"
-					// contentStyle={{
-					// 	width: `${layout.length * (pageSizeMap[format].width * MM_TO_PX + 42)}px`,
-					// 	gridTemplateColumns: `repeat(${layout.length}, 1fr)`,
-					// }}
 				>
 					<div
 						id={"screen-sizes"}
@@ -152,7 +150,9 @@ export const Canvas: React.FC<{
 						))}
 					</div>
 				</TransformComponent>
+
 				<CanvasDebugger />
+
 				<CanvasToolbar />
 			</TransformWrapper>
 		</CanvasWrapper>

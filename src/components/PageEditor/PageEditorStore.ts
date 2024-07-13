@@ -1,21 +1,31 @@
-import { findIndex, insert, pipe, updateAt } from "remeda";
 import { create } from "zustand";
+import type { ScreenSize } from "../Page/ScreenSize";
 
-export type Target = {
+type BaseTarget = {
 	uuid: string;
-	type: "ScreenSize" | "Target";
 	rect: DOMRect;
 };
 
+export type ScreenSizeTarget = BaseTarget & {
+	type: "screen-size";
+	payload: ScreenSize;
+};
+
+export type TargetTarget = BaseTarget & {
+	type: "target";
+};
+
+export type Target = ScreenSizeTarget | TargetTarget;
+
 export type PageEditorStore = {
 	targets: Target[];
-	addTarget: (target: Target) => void;
+	upsertTarget: (target: Target) => void;
 	removeTarget: (target: Target) => void;
 };
 
 export const usePageEditorStore = create<PageEditorStore>()((set) => ({
 	targets: [],
-	addTarget: (newTarget) => {
+	upsertTarget: (newTarget) => {
 		set(({ targets }) => {
 			const index = targets.findIndex(
 				(target) => target.uuid === newTarget.uuid,
