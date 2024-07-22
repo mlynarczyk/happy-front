@@ -17,15 +17,3 @@ const Template: StoryFn<typeof ScreenSize> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {};
-
-// cavnas;
-// sizing;
-// next;
-//
-// make;
-// sure;
-// everything;
-// is in view;
-// when;
-// you;
-// open;

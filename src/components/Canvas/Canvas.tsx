@@ -30,7 +30,6 @@ const CanvasWrapper = styled.div`
     margin: 0;
     padding: 0;
     transform-origin: 0% 0%;
-
   }
 
   .canvas-wrapper {

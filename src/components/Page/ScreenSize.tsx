@@ -4,6 +4,7 @@ import { uuid } from "../../utils/uuid";
 import { BREAKPOINT_SPACING } from "../Canvas/Canvas";
 import { useCanvasStore } from "../Canvas/CanvasStore";
 import { type Target, usePageEditorStore } from "../PageEditor/PageEditorStore";
+import { Page } from "./Page";
 import * as S from "./ScreenSize.styles";
 import { ScreenSizeReporter } from "./ScreenSizeReporter";
 
@@ -17,20 +18,20 @@ export const SCREEN_SIZES: Record<
 	ScreenSize,
 	{
 		width: number;
-		height: number;
+		//height: number;
 	}
 > = {
 	phone: {
 		width: 375,
-		height: 16000,
+		// height: 16000,
 	},
 	tablet: {
 		width: 1080,
-		height: 12000,
+		//height: 12000,
 	},
 	desktop: {
 		width: 1440,
-		height: 8000,
+		//height: 8000,
 	},
 };
 
@@ -43,12 +44,13 @@ export const ScreenSize: React.FC<PageProps> = ({ screenSize }) => {
 			style={{
 				position: "relative",
 				...SCREEN_SIZES[screenSize],
+				height: "fit-content",
 				boxShadow: `5px 5px calc(.1*${BREAKPOINT_SPACING}px)rgba(0,0,0,.1019607843)`,
 				backgroundColor: "#fff",
 			}}
 		>
 			<ScreenSizeReporter trackedElement={ref} screenSize={screenSize} />
-			ScreenSize
+			<Page />
 		</div>
 	);
 };

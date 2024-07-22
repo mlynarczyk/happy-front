@@ -13,5 +13,5 @@ export const TopNavigation: React.FC = () => {
 
 	transformWrapperRef.current?.state;
 
-	return <div>TopNavigation</div>;
+	return null;
 };

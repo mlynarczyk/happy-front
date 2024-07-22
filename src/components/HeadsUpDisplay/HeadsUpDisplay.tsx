@@ -16,7 +16,7 @@ export const HeadsUpDisplay: React.FC = () => {
 		(target) => target.type === "screen-size",
 	) as ScreenSizeTarget[];
 
-	const otherTargets = targets.filter((target) => target.type === "Target");
+	const otherTargets = targets.filter((target) => target.type === "target");
 
 	return (
 		<div
@@ -37,23 +37,21 @@ export const HeadsUpDisplay: React.FC = () => {
 						key={target.uuid}
 						style={{
 							position: "absolute",
-
+							zIndex: 1,
 							top: `${target.rect.top}px`,
 							left: `${target.rect.left}px`,
 
 							width: `${target.rect.width}px`,
 							height: `${target.rect.height}px`,
 
-							border: "1px solid #000",
+							border: "1px solid red",
 						}}
 					>
-						{target.uuid}
-						<br />
+						{/*{target.uuid}*/}
+						{/*<br />*/}
 						{target.rect.top}
 						<br />
 						{target.rect.left}
-
-						<Button>Add</Button>
 					</div>
 				);
 			})}
