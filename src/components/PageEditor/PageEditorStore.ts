@@ -4,6 +4,7 @@ import type { ScreenSize } from "../Page/ScreenSize";
 type BaseTarget = {
 	uuid: string;
 	rect: DOMRect;
+	frameName: ScreenSize;
 };
 
 export type ScreenSizeTarget = BaseTarget & {

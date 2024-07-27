@@ -4,6 +4,7 @@ import { uuid } from "../../utils/uuid";
 import { BREAKPOINT_SPACING } from "../Canvas/Canvas";
 import { useCanvasStore } from "../Canvas/CanvasStore";
 import { type Target, usePageEditorStore } from "../PageEditor/PageEditorStore";
+import { PageFrame } from "../PageEditor/PageFrame/PageFrame";
 import { Page } from "./Page";
 import * as S from "./ScreenSize.styles";
 import { ScreenSizeReporter } from "./ScreenSizeReporter";
@@ -50,7 +51,8 @@ export const ScreenSize: React.FC<PageProps> = ({ screenSize }) => {
 			}}
 		>
 			<ScreenSizeReporter trackedElement={ref} screenSize={screenSize} />
-			<Page />
+
+			<PageFrame screenSize={screenSize} />
 		</div>
 	);
 };

@@ -8,6 +8,7 @@ import Frame, { FrameContextConsumer } from "react-frame-component";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
 import type { TPage } from "../../types/TPage";
+import { HeadsUpDisplay } from "../HeadsUpDisplay/HeadsUpDisplay";
 import { SCREEN_SIZES, ScreenSize } from "../Page/ScreenSize";
 import { CanvasDebugger } from "./CanvasDebugger/CanvasDebugger";
 import { CanvasInitializer } from "./CanvasInitializer";
@@ -89,8 +90,6 @@ export const Canvas: React.FC<{
 
 	const { offsetY, offsetX, scale } = useInitialCanvasPosition();
 
-	console.log({ offsetY, offsetX, scale });
-
 	const [showContent, setShowContent] = useState(false);
 
 	const format = "a4";
@@ -129,6 +128,8 @@ export const Canvas: React.FC<{
 					wheelPanning: true,
 				}}
 			>
+				<HeadsUpDisplay />
+
 				<TransformComponent
 					wrapperStyle={{
 						visibility: showContent ? "visible" : "hidden",

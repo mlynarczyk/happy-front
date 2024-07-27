@@ -1,48 +1,64 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
-import { useTransformEffect } from "react-zoom-pan-pinch";
+import { useDebounceCallback, useEventListener } from "usehooks-ts";
 import { uuid } from "../../utils/uuid";
-import { usePageEditorStore } from "../PageEditor/PageEditorStore";
-import type { ScreenSize } from "./ScreenSize";
 
 export const ElementReporter: React.FC<{
 	trackedElement: HTMLElement | null;
 }> = ({ trackedElement }) => {
 	const { current: id } = useRef(uuid());
 
-	const { upsertTarget, removeTarget } = usePageEditorStore(
-		({ upsertTarget, removeTarget }) => {
-			return { upsertTarget: upsertTarget, removeTarget };
-		},
-	);
+	useEventListener("message", (event) => {
+		const payload = event.data as unknown;
 
-	useTransformEffect(() => {
-		if (!trackedElement) return;
+		if (!payload || payload.source !== "happybara") return;
 
-		upsertTarget({
-			uuid: id,
-			type: "target",
-			rect: trackedElement.getBoundingClientRect(),
-		});
+		if (!payload || !payload?.type) return;
+
+		if (payload.type === "canvas-transformed") {
+			if (!trackedElement) return;
+
+			window.parent.postMessage({
+				source: "happybara",
+				type: "upsert-target",
+				target: {
+					uuid: id,
+					type: "target",
+					rect: trackedElement.getBoundingClientRect(),
+				},
+			});
+		}
 	});
 
 	useEffect(() => {
 		if (!trackedElement) return;
 
-		upsertTarget({
-			uuid: id,
-			type: "target",
-			rect: trackedElement.getBoundingClientRect(),
-		});
+		window.parent.postMessage(
+			JSON.stringify({
+				source: "happybara",
+				type: "upsert-target",
+				target: {
+					uuid: id,
+					type: "target",
+					rect: trackedElement.getBoundingClientRect(),
+				},
+			}),
+		);
 
 		return () => {
-			removeTarget({
-				uuid: id,
-				type: "target",
-				rect: trackedElement.getBoundingClientRect(),
-			});
+			window.parent.postMessage(
+				JSON.stringify({
+					source: "happybara",
+					type: "remove-target",
+					target: {
+						uuid: id,
+						type: "target",
+						rect: trackedElement.getBoundingClientRect(),
+					},
+				}),
+			);
 		};
-	}, [trackedElement, removeTarget, upsertTarget]);
+	}, [trackedElement]);
 
 	return null;
 };

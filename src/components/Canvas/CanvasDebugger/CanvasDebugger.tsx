@@ -19,9 +19,9 @@ export const CanvasDebugger: React.FC = () => {
 	// 	console.log(context.state);
 	// });
 
-	useEffect(() => {
-		// console.log(targets);
-	}, [targets]);
+	// useEffect(() => {
+	// 	console.log(targets);
+	// }, [targets]);
 
 	const transformState = (() => {
 		return Object.entries(context.transformState);

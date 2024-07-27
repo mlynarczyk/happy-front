@@ -16,7 +16,7 @@ export type CanvasStore = {
 	setCanvas: (canvas: TPage) => void;
 };
 
-const ALL_SCREEN_SIZES = ["desktop", "tablet", "phone"] as const;
+export const ALL_SCREEN_SIZES = ["desktop", "tablet", "phone"] as const;
 
 export const useCanvasStore = create<CanvasStore>()((set) => ({
 	transformWrapperRef: createRef<ReactZoomPanPinchRef | null>(),

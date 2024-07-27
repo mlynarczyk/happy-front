@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Section } from "./Section";
+
+import { useDebounceCallback, useResizeObserver } from "usehooks-ts";
 
 const FakeBody = styled.div`
 	--text-size-xs: 0.64rem;
@@ -79,8 +81,28 @@ const Paragraph = styled.p`
 `;
 
 export const Page = () => {
+	const ref = useRef<HTMLDivElement>(null);
+
+	const setSize = (event) => {
+		window.parent.postMessage({
+			source: "happybara",
+			type: "set-height",
+			payload: {
+				height: event.height,
+			},
+		});
+	};
+
+	const onResize = useDebounceCallback(setSize, 200);
+
+	const { width = 0, height = 0 } = useResizeObserver({
+		ref,
+		onResize,
+		box: "border-box",
+	});
+
 	return (
-		<FakeBody>
+		<FakeBody ref={ref}>
 			<Main>
 				<Section>
 					<Title>Jane Doe</Title>

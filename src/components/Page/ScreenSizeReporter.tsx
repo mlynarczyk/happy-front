@@ -9,7 +9,7 @@ export const ScreenSizeReporter: React.FC<{
 	trackedElement: HTMLDivElement | null;
 	screenSize: ScreenSize;
 }> = ({ trackedElement, screenSize }) => {
-	const { current: id } = useRef(uuid());
+	const { current: id } = useRef(`${uuid()}-${screenSize}`);
 
 	const { upsertTarget, removeTarget } = usePageEditorStore(
 		({ upsertTarget, removeTarget }) => {
@@ -23,6 +23,7 @@ export const ScreenSizeReporter: React.FC<{
 		upsertTarget({
 			uuid: id,
 			type: "screen-size",
+			frameName: screenSize,
 			rect: trackedElement.getBoundingClientRect(),
 			payload: screenSize,
 		});
@@ -34,6 +35,7 @@ export const ScreenSizeReporter: React.FC<{
 		upsertTarget({
 			uuid: id,
 			type: "screen-size",
+			frameName: screenSize,
 			rect: trackedElement.getBoundingClientRect(),
 			payload: screenSize,
 		});
@@ -42,6 +44,7 @@ export const ScreenSizeReporter: React.FC<{
 			removeTarget({
 				uuid: id,
 				type: "screen-size",
+				frameName: screenSize,
 				rect: trackedElement.getBoundingClientRect(),
 				payload: screenSize,
 			});

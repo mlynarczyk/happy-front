@@ -12,7 +12,7 @@ export const PageEditor: React.FC<{
 	return (
 		<div>
 			<TopNavigation />
-			<HeadsUpDisplay />
+
 			<Canvas page={page} />
 		</div>
 	);

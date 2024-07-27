@@ -1,4 +1,5 @@
 import type React from "react";
+import { useTransformContext } from "react-zoom-pan-pinch";
 import { Button } from "../Button";
 import { ScreenSize } from "../Page/ScreenSize";
 import {
@@ -8,6 +9,8 @@ import {
 import { ScreenSizeHud } from "./ScreenSizeHud/ScreenSizeHud";
 
 export const HeadsUpDisplay: React.FC = () => {
+	const { transformState } = useTransformContext();
+
 	const targets = usePageEditorStore(({ targets }) => {
 		return targets;
 	});
@@ -18,6 +21,28 @@ export const HeadsUpDisplay: React.FC = () => {
 
 	const otherTargets = targets.filter((target) => target.type === "target");
 
+	const adjustedOtherTargets = otherTargets
+		.map((otherTarget) => {
+			const screenSizeTarget = screenSizeTargets.find(
+				(screenTarget) => screenTarget.frameName === otherTarget.frameName,
+			);
+
+			if (!screenSizeTarget) throw new Error("Missing screenSize target");
+
+			const scale = transformState.scale;
+			const adjustedTop =
+				screenSizeTarget.rect.top + otherTarget.rect.top * scale;
+			const adjustedLeft = screenSizeTarget.rect.left;
+
+			return {
+				...otherTarget,
+				adjustedTop,
+				adjustedLeft,
+				scale,
+			};
+		})
+		.filter((x) => x !== null);
+
 	return (
 		<div
 			data-testid={"heads-up-display"}
@@ -27,34 +52,37 @@ export const HeadsUpDisplay: React.FC = () => {
 				zIndex: 1,
 			}}
 		>
-			{screenSizeTargets.map((target) => {
-				return <ScreenSizeHud key={target.uuid} target={target} />;
-			})}
+			<div data-testid={"heads-up-display-screen-size-target"}>
+				{screenSizeTargets.map((target) => {
+					return <ScreenSizeHud key={target.uuid} target={target} />;
+				})}
+			</div>
 
-			{otherTargets.map((target) => {
-				return (
-					<div
-						key={target.uuid}
-						style={{
-							position: "absolute",
-							zIndex: 1,
-							top: `${target.rect.top}px`,
-							left: `${target.rect.left}px`,
+			<div data-testid={"heads-up-display-screen-target-target"}>
+				{adjustedOtherTargets.map((adjustedTarget) => {
+					const { uuid, rect, adjustedTop, adjustedLeft, scale } =
+						adjustedTarget;
 
-							width: `${target.rect.width}px`,
-							height: `${target.rect.height}px`,
-
-							border: "1px solid red",
-						}}
-					>
-						{/*{target.uuid}*/}
-						{/*<br />*/}
-						{target.rect.top}
-						<br />
-						{target.rect.left}
-					</div>
-				);
-			})}
+					return (
+						<div
+							key={uuid}
+							style={{
+								position: "absolute",
+								zIndex: 1,
+								top: `${adjustedTop}px`,
+								left: `${adjustedLeft}px`,
+								width: `${rect.width * scale}px`,
+								height: `${rect.height * scale}px`,
+								border: "1px solid red",
+							}}
+						>
+							{rect.top}
+							<br />
+							{rect.left}
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 };
