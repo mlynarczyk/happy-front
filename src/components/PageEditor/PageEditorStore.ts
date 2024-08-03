@@ -18,10 +18,12 @@ export type TargetTarget = BaseTarget & {
 
 export type Target = ScreenSizeTarget | TargetTarget;
 
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
 export type PageEditorStore = {
 	targets: Target[];
 	upsertTarget: (target: Target) => void;
-	removeTarget: (target: Target) => void;
+	removeTarget: (target: Optional<Target, "rect">) => void;
 };
 
 export const usePageEditorStore = create<PageEditorStore>()((set) => ({

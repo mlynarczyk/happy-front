@@ -4,6 +4,15 @@ import { useTransformEffect } from "react-zoom-pan-pinch";
 import { useEventListener } from "usehooks-ts";
 import { uuid } from "../../../utils/uuid";
 import type { ScreenSize } from "../../Page/ScreenSize";
+import {
+	CANVAS_TRANSFORMED,
+	CHILD_FRAME_ORIGIN,
+	type ChildOriginMessageData,
+	SET_HEIGHT_TYPE,
+	sendParentOriginMessage,
+	useChildFrameOriginListener,
+	useParentFrameOriginListener,
+} from "./FrameBridgeApi";
 import { usePageFrameIncomingMessages } from "./usePageFrameIncomingMessages";
 import { usePageFrameOutgoingMessages } from "./usePageFrameOutgoingMessages";
 
@@ -27,23 +36,19 @@ export const PageFrame: React.FC<{
 	useTransformEffect(() => {
 		if (!ref.current) return;
 
-		ref.current.contentWindow.postMessage({
-			source: "happybara",
-			type: "canvas-transformed",
+		sendParentOriginMessage(ref.current?.contentWindow, {
+			type: CANVAS_TRANSFORMED,
 		});
 	});
 
-	useEventListener("message", (event) => {
-		const payload = event.data as unknown;
-
-		if (!payload || payload.source !== "happybara") return;
-
+	useChildFrameOriginListener((event, data) => {
 		const eventScreenSize = event.source.location.hash.split("#")[1];
 
 		if (screenSize !== eventScreenSize) return;
 
-		if (payload.type === "set-height") {
-			setHeight(event.data.payload.height);
+		if (data.type === SET_HEIGHT_TYPE) {
+			console.log("asdasdsss1");
+			setHeight(data.payload.height);
 		}
 	});
 

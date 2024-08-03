@@ -1,7 +1,15 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
-import { useDebounceCallback, useEventListener } from "usehooks-ts";
+import { useEventListener } from "usehooks-ts";
 import { uuid } from "../../utils/uuid";
+import {
+	CANVAS_TRANSFORMED,
+	PARENT_FRAME_ORIGIN,
+	REMOVE_TARGET_TYPE,
+	TARGET_TYPE_TARGET,
+	UPSERT_TARGET_TYPE,
+	sendChildOriginMessage,
+} from "../PageEditor/PageFrame/FrameBridgeApi";
 
 export const ElementReporter: React.FC<{
 	trackedElement: HTMLElement | null;
@@ -11,19 +19,16 @@ export const ElementReporter: React.FC<{
 	useEventListener("message", (event) => {
 		const payload = event.data as unknown;
 
-		if (!payload || payload.source !== "happybara") return;
+		if (!payload || payload.type !== PARENT_FRAME_ORIGIN) return;
 
-		if (!payload || !payload?.type) return;
-
-		if (payload.type === "canvas-transformed") {
+		if (payload.type === CANVAS_TRANSFORMED) {
 			if (!trackedElement) return;
 
-			window.parent.postMessage({
-				source: "happybara",
-				type: "upsert-target",
-				target: {
+			sendChildOriginMessage(window.parent, {
+				type: UPSERT_TARGET_TYPE,
+				payload: {
 					uuid: id,
-					type: "target",
+					type: TARGET_TYPE_TARGET,
 					rect: trackedElement.getBoundingClientRect(),
 				},
 			});
@@ -33,30 +38,24 @@ export const ElementReporter: React.FC<{
 	useEffect(() => {
 		if (!trackedElement) return;
 
-		window.parent.postMessage(
-			JSON.stringify({
-				source: "happybara",
-				type: "upsert-target",
-				target: {
+		sendChildOriginMessage(window.parent, {
+			type: UPSERT_TARGET_TYPE,
+			payload: {
+				uuid: id,
+				type: TARGET_TYPE_TARGET,
+				rect: trackedElement.getBoundingClientRect(),
+			},
+		});
+
+		return () => {
+			sendChildOriginMessage(window.parent, {
+				type: REMOVE_TARGET_TYPE,
+				payload: {
 					uuid: id,
 					type: "target",
 					rect: trackedElement.getBoundingClientRect(),
 				},
-			}),
-		);
-
-		return () => {
-			window.parent.postMessage(
-				JSON.stringify({
-					source: "happybara",
-					type: "remove-target",
-					target: {
-						uuid: id,
-						type: "target",
-						rect: trackedElement.getBoundingClientRect(),
-					},
-				}),
-			);
+			});
 		};
 	}, [trackedElement]);
 

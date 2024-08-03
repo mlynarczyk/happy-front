@@ -5,7 +5,6 @@ import { create } from "zustand";
 import type { TPage } from "../../types/TPage";
 import { uuid } from "../../utils/uuid";
 import type { ScreenSize } from "../Page/ScreenSize";
-import { INITIAL_SCREEN_SIZES } from "../Page/ScreenSize";
 
 export type CanvasStore = {
 	transformWrapperRef: RefObject<ReactZoomPanPinchRef | null>;
