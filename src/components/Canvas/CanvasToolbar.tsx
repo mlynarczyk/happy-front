@@ -4,6 +4,7 @@ import { Button } from "../Button";
 import { useControls } from "react-zoom-pan-pinch";
 import { useCanvasStore } from "./CanvasStore";
 import * as S from "./CanvasToolbar.styles";
+import { useFocusScreenSizeCanvasPosition } from "./useFocusScreenSizeCanvasPosition";
 import { useInitialCanvasPosition } from "./useInitialCanvasPosition";
 
 export const CanvasToolbar: React.FC = () => {
@@ -11,6 +12,11 @@ export const CanvasToolbar: React.FC = () => {
 
 	const { offsetY, offsetX, scale } = useInitialCanvasPosition();
 
+	const desktop = useFocusScreenSizeCanvasPosition("desktop");
+
+	const onFocusDesktop = () => {
+		setTransform(desktop.offsetX, desktop.offsetY, desktop.scale, 200);
+	};
 	const onResetView = () => {
 		setTransform(offsetX, offsetY, scale, 200);
 	};
@@ -18,6 +24,8 @@ export const CanvasToolbar: React.FC = () => {
 	return (
 		<S.Toolbar>
 			<S.ToolbarCenter>
+				<Button label="Desktop" onClick={onFocusDesktop} />
+
 				<Button
 					label="Zoom In"
 					onClick={() => {

@@ -1,8 +1,12 @@
 import styled from "@emotion/styled";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Section } from "./Section";
 
 import { useDebounceCallback, useResizeObserver } from "usehooks-ts";
+import {
+	SET_HEIGHT_TYPE,
+	sendChildOriginMessage,
+} from "../PageEditor/PageFrame/FrameBridgeApi";
 
 const FakeBody = styled.div`
 	--text-size-xs: 0.64rem;
@@ -81,12 +85,11 @@ const Paragraph = styled.p`
 `;
 
 export const Page = () => {
-	const ref = useRef<HTMLDivElement>(null);
+	const ref = useRef<HTMLDivElement | null>(null);
 
 	const setSize = (event) => {
-		window.parent.postMessage({
-			source: "happybara",
-			type: "set-height",
+		sendChildOriginMessage(window.parent, {
+			type: SET_HEIGHT_TYPE,
 			payload: {
 				height: event.height,
 			},

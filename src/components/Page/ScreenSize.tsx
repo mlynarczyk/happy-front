@@ -24,15 +24,12 @@ export const SCREEN_SIZES: Record<
 > = {
 	phone: {
 		width: 375,
-		// height: 16000,
 	},
 	tablet: {
 		width: 1080,
-		//height: 12000,
 	},
 	desktop: {
 		width: 1440,
-		//height: 8000,
 	},
 };
 
