@@ -1,4 +1,3 @@
-import { SCREEN_SIZES } from "../Page/ScreenSize";
 import { BREAKPOINT_SPACING } from "./Canvas";
 import { useCanvasStore } from "./CanvasStore";
 
@@ -11,8 +10,8 @@ export const useInitialCanvasPosition = () => {
 
 	const contentWidth = (() => {
 		const visibleScreenSizesWidth = visibleScreenSizes
-			.map((visibleBreakpoint) => {
-				return SCREEN_SIZES[visibleBreakpoint].width;
+			.map((vss) => {
+				return vss.width;
 			})
 			.reduce((sum, item) => sum + item, 0);
 

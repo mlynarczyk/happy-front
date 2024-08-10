@@ -9,7 +9,7 @@ import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
 import type { TPage } from "../../types/TPage";
 import { HeadsUpDisplay } from "../HeadsUpDisplay/HeadsUpDisplay";
-import { SCREEN_SIZES, ScreenSize } from "../Page/ScreenSize";
+import { ScreenSize } from "../Page/ScreenSize";
 import { CanvasDebugger } from "./CanvasDebugger/CanvasDebugger";
 import { CanvasInitializer } from "./CanvasInitializer";
 import { useCanvasStore } from "./CanvasStore";
@@ -47,38 +47,6 @@ const CanvasWrapper = styled.div`
   }
 `;
 
-const StyledIframe = styled(Frame)`
-  height: fit-content;
-  width: fit-content;
-  padding: 0;
-  margin: 0;
-  border: none;
-
-  html,
-  body {
-    padding: 0;
-    margin: 0;
-  }
-`;
-
-const memoizedCreateCacheWithContainer = weakMemoize((container) => {
-	return createCache({ container, key: "css" } as Options);
-});
-
-export const FrameProvider = (props) => (
-	<FrameContextConsumer>
-		{({ document }) => {
-			if (!document) return;
-
-			return (
-				<CacheProvider value={memoizedCreateCacheWithContainer(document.head)}>
-					{props.children}
-				</CacheProvider>
-			);
-		}}
-	</FrameContextConsumer>
-);
-
 export const Canvas: React.FC<{
 	page: TPage;
 }> = ({ page }) => {
@@ -92,15 +60,13 @@ export const Canvas: React.FC<{
 
 	const [showContent, setShowContent] = useState(false);
 
-	const format = "a4";
-
-	const layout = [1];
-
 	useEffect(() => {
 		const fitContentToViewport = () => {
 			if (!transformWrapperRef.current) return;
 
 			setTimeout(() => {
+				if (!transformWrapperRef.current) return;
+
 				transformWrapperRef.current.setTransform(offsetX, offsetY, scale, 0);
 				setShowContent(true);
 			}, 0);
@@ -146,7 +112,7 @@ export const Canvas: React.FC<{
 						}}
 					>
 						{visibleScreenSizes.map((screenSize) => (
-							<ScreenSize screenSize={screenSize} key={screenSize} />
+							<ScreenSize screenSize={screenSize} key={screenSize.uuid} />
 						))}
 					</div>
 				</TransformComponent>

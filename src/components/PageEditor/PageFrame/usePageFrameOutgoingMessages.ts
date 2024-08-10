@@ -1,38 +1,42 @@
-import { useTransformEffect } from "react-zoom-pan-pinch";
-import { useEventListener } from "usehooks-ts";
-import { ALL_SCREEN_SIZES } from "../../Canvas/CanvasStore";
+import { useCanvasStore } from "../../Canvas/CanvasStore";
 import type { ScreenSize } from "../../Page/ScreenSize";
-import { type Target, usePageEditorStore } from "../PageEditorStore";
 import {
-	CHILD_FRAME_ORIGIN,
 	REMOVE_TARGET_TYPE,
 	UPSERT_TARGET_TYPE,
 	useChildFrameOriginListener,
 } from "./FrameBridgeApi";
 
-export const usePageFrameOutgoingMessages = () => {
-	const { upsertTarget, removeTarget } = usePageEditorStore(
-		({ upsertTarget, removeTarget }) => {
-			return { upsertTarget: upsertTarget, removeTarget };
-		},
+export const usePageFrameOutgoingMessages = (screenSize: ScreenSize) => {
+	const { isScreenSizePresent, upsertTarget, removeTarget } = useCanvasStore(
+		({ screenSizes, isScreenSizePresent, upsertTarget, removeTarget }) => ({
+			screenSizes,
+			isScreenSizePresent,
+			upsertTarget,
+			removeTarget,
+		}),
 	);
 
 	useChildFrameOriginListener((event, data) => {
-		const screenSize = event.source.location.hash.split("#")[1];
+		if (!isScreenSizePresent(screenSize)) return;
 
-		if (!ALL_SCREEN_SIZES.includes(screenSize)) return;
+		// @ts-ignore
+		const eventScreenSizeUuid = event.source.location.hash.split(
+			"#",
+		)[1] as string;
+
+		if (screenSize.uuid !== eventScreenSizeUuid) return;
 
 		if (data.type === UPSERT_TARGET_TYPE) {
 			upsertTarget({
 				...data.payload,
-				frameName: screenSize,
+				screenSize: screenSize,
 			});
 		}
 
 		if (data.type === REMOVE_TARGET_TYPE) {
 			removeTarget({
 				...data.payload,
-				frameName: screenSize,
+				screenSize: screenSize,
 			});
 		}
 	});

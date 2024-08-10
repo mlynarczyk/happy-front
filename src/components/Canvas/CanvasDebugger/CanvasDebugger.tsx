@@ -1,17 +1,12 @@
 import type React from "react";
-import { useEffect } from "react";
-import {
-	useTransformComponent,
-	useTransformContext,
-	useTransformEffect,
-} from "react-zoom-pan-pinch";
-import { usePageEditorStore } from "../../PageEditor/PageEditorStore";
+import { useTransformContext } from "react-zoom-pan-pinch";
+import { useCanvasStore } from "../CanvasStore";
 import * as S from "./CanvasDebugger.styles";
 
 export const CanvasDebugger: React.FC = () => {
 	const context = useTransformContext();
 
-	const targets = usePageEditorStore(({ targets }) => {
+	const targets = useCanvasStore(({ targets }) => {
 		return targets;
 	});
 

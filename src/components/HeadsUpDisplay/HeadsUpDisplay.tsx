@@ -1,17 +1,12 @@
 import type React from "react";
 import { useTransformContext } from "react-zoom-pan-pinch";
-import { Button } from "../Button";
-import { ScreenSize } from "../Page/ScreenSize";
-import {
-	type ScreenSizeTarget,
-	usePageEditorStore,
-} from "../PageEditor/PageEditorStore";
+import { type ScreenSizeTarget, useCanvasStore } from "../Canvas/CanvasStore";
 import { ScreenSizeHud } from "./ScreenSizeHud/ScreenSizeHud";
 
 export const HeadsUpDisplay: React.FC = () => {
 	const { transformState } = useTransformContext();
 
-	const targets = usePageEditorStore(({ targets }) => {
+	const targets = useCanvasStore(({ targets }) => {
 		return targets;
 	});
 
@@ -24,7 +19,8 @@ export const HeadsUpDisplay: React.FC = () => {
 	const adjustedOtherTargets = otherTargets
 		.map((otherTarget) => {
 			const screenSizeTarget = screenSizeTargets.find(
-				(screenTarget) => screenTarget.frameName === otherTarget.frameName,
+				(screenTarget) =>
+					screenTarget.screenSize.uuid === otherTarget.screenSize.uuid,
 			);
 
 			if (!screenSizeTarget) throw new Error("Missing screenSize target");

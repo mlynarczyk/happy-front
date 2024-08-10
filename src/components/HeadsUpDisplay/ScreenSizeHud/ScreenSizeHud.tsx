@@ -1,20 +1,25 @@
 import type React from "react";
-import { useCanvasStore } from "../../Canvas/CanvasStore";
-import { SCREEN_SIZES } from "../../Page/ScreenSize";
-import type {
-	ScreenSizeTarget,
+import {
+	type ScreenSizeTarget,
 	Target,
-} from "../../PageEditor/PageEditorStore";
+	useCanvasStore,
+} from "../../Canvas/CanvasStore";
+import { SCREEN_SIZES } from "../../Page/ScreenSize";
 
 export const ScreenSizeHud: React.FC<{
 	target: ScreenSizeTarget;
 }> = ({ target }) => {
-	const { addScreenSize, removeScreenSize } = useCanvasStore(
-		({ addScreenSize, removeScreenSize }) => ({
+	const { addScreenSize, removeScreenSize, getScreenSize } = useCanvasStore(
+		({ addScreenSize, removeScreenSize, getScreenSize }) => ({
 			addScreenSize,
 			removeScreenSize,
+			getScreenSize,
 		}),
 	);
+
+	const screenSize = getScreenSize(target.payload.uuid);
+
+	if (!screenSize) return null;
 
 	return (
 		<div
@@ -51,7 +56,7 @@ export const ScreenSizeHud: React.FC<{
 					alignItems: "center",
 				}}
 			>
-				<div>{`${SCREEN_SIZES[target.payload].width}px`}</div>
+				<div>{`${screenSize.width}px`}</div>
 
 				<div
 					style={{
@@ -61,7 +66,9 @@ export const ScreenSizeHud: React.FC<{
 				>
 					<button
 						type="button"
-						onClick={addScreenSize}
+						onClick={() => {
+							addScreenSize(screenSize.width);
+						}}
 						style={{
 							pointerEvents: "all",
 						}}

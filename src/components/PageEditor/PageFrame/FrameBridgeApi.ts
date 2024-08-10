@@ -70,7 +70,7 @@ export function sendChildOriginMessage<
 		makeMessage({
 			origin: CHILD_FRAME_ORIGIN,
 			...data,
-		}),
+		} as ChildOriginMessageData),
 	);
 }
 
@@ -93,7 +93,8 @@ export const useChildFrameOriginListener = (
 	useEventListener("message", (event) => {
 		const data = event.data as unknown;
 
-		if (!data || data.origin !== CHILD_FRAME_ORIGIN) return;
+		// @ts-ignore
+		if (!data || data?.origin !== CHILD_FRAME_ORIGIN) return;
 
 		memoizedCallback(event, data as ChildOriginMessageData);
 	});
@@ -107,6 +108,7 @@ export const useParentFrameOriginListener = (
 	useEventListener("message", (event) => {
 		const data = event.data as unknown;
 
+		// @ts-ignore
 		if (!data || data.origin !== PARENT_FRAME_ORIGIN) return;
 
 		memoizedCallback(event, data as ParentOriginMessageData);

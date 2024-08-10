@@ -19,8 +19,10 @@ export const ElementReporter: React.FC<{
 	useEventListener("message", (event) => {
 		const payload = event.data as unknown;
 
+		// @ts-ignore
 		if (!payload || payload.type !== PARENT_FRAME_ORIGIN) return;
 
+		// @ts-ignore
 		if (payload.type === CANVAS_TRANSFORMED) {
 			if (!trackedElement) return;
 

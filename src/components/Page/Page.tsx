@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Section } from "./Section";
 
 import { useDebounceCallback, useResizeObserver } from "usehooks-ts";
@@ -87,11 +87,14 @@ const Paragraph = styled.p`
 export const Page = () => {
 	const ref = useRef<HTMLDivElement | null>(null);
 
-	const setSize = (event) => {
+	const setSize = (size: {
+		width: number | undefined;
+		height: number | undefined;
+	}) => {
 		sendChildOriginMessage(window.parent, {
 			type: SET_HEIGHT_TYPE,
 			payload: {
-				height: event.height,
+				height: size.height || 0,
 			},
 		});
 	};

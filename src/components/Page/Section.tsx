@@ -14,7 +14,9 @@ const StyledWidth = styled.div`
 	margin: 0 auto;
 `;
 
-export const Section: React.FC = ({ children }) => {
+export const Section: React.FC<{
+	children: React.ReactNode;
+}> = ({ children }) => {
 	const [ref, setRef] = useState<HTMLElement | null>(null);
 
 	return (
