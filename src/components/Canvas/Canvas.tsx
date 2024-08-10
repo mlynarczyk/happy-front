@@ -83,6 +83,7 @@ export const Canvas: React.FC<{
 			<TransformWrapper
 				// doubleClick={{ disabled: true }}
 				ref={transformWrapperRef}
+				doubleClick={{ disabled: true }}
 				centerOnInit
 				maxScale={2}
 				minScale={0.2}
